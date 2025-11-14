@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link, Router } from '@tanstack/react-router'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
 export const Route = createFileRoute('/')({ component: App })
@@ -33,14 +33,16 @@ function App() {
 
       <section>
         <div className="flex flex-1 gap-10 items-center justify-center">
-          <Card className="w-full max-w-sm items-center">
-            <CardContent>
-              <img src={digimon.imageURL ?? ''} alt={digimon.name} className="w-74 h-74" />
-            </CardContent>
-            <CardFooter>
-              <h1 className="font-[DigiPixel] text-text text-2xl">Digimon List</h1>
-            </CardFooter>
-          </Card>
+          <Link to="/digimon/list">
+            <Card className="w-full max-w-sm items-center">
+              <CardContent>
+                <img src={digimon.imageURL ?? ''} alt={digimon.name} className="w-74 h-74" />
+              </CardContent>
+              <CardFooter>
+                <h1 className="font-[DigiPixel] text-text text-2xl">Digimon List</h1>
+              </CardFooter>
+            </Card>
+          </Link>
           <Card className="w-full max-w-sm items-center">
             <CardContent>
               <img src={digivolution.imageURL ?? ''} alt={digivolution.name} className="w-74 h-74" />

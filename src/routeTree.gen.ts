@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DigimonListRouteImport } from './routes/digimon.list'
+import { Route as ApiDigimonRouteImport } from './routes/api/digimon'
 import { Route as ApiDigimonMainRouteImport } from './routes/api/digimon.main'
 import { Route as ApiDigimonIdRouteImport } from './routes/api/digimon.$id'
 
@@ -18,45 +20,77 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDigimonMainRoute = ApiDigimonMainRouteImport.update({
-  id: '/api/digimon/main',
-  path: '/api/digimon/main',
+const DigimonListRoute = DigimonListRouteImport.update({
+  id: '/digimon/list',
+  path: '/digimon/list',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDigimonIdRoute = ApiDigimonIdRouteImport.update({
-  id: '/api/digimon/$id',
-  path: '/api/digimon/$id',
+const ApiDigimonRoute = ApiDigimonRouteImport.update({
+  id: '/api/digimon',
+  path: '/api/digimon',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDigimonMainRoute = ApiDigimonMainRouteImport.update({
+  id: '/main',
+  path: '/main',
+  getParentRoute: () => ApiDigimonRoute,
+} as any)
+const ApiDigimonIdRoute = ApiDigimonIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiDigimonRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/digimon': typeof ApiDigimonRouteWithChildren
+  '/digimon/list': typeof DigimonListRoute
   '/api/digimon/$id': typeof ApiDigimonIdRoute
   '/api/digimon/main': typeof ApiDigimonMainRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/digimon': typeof ApiDigimonRouteWithChildren
+  '/digimon/list': typeof DigimonListRoute
   '/api/digimon/$id': typeof ApiDigimonIdRoute
   '/api/digimon/main': typeof ApiDigimonMainRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/digimon': typeof ApiDigimonRouteWithChildren
+  '/digimon/list': typeof DigimonListRoute
   '/api/digimon/$id': typeof ApiDigimonIdRoute
   '/api/digimon/main': typeof ApiDigimonMainRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/digimon/$id' | '/api/digimon/main'
+  fullPaths:
+    | '/'
+    | '/api/digimon'
+    | '/digimon/list'
+    | '/api/digimon/$id'
+    | '/api/digimon/main'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/digimon/$id' | '/api/digimon/main'
-  id: '__root__' | '/' | '/api/digimon/$id' | '/api/digimon/main'
+  to:
+    | '/'
+    | '/api/digimon'
+    | '/digimon/list'
+    | '/api/digimon/$id'
+    | '/api/digimon/main'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/digimon'
+    | '/digimon/list'
+    | '/api/digimon/$id'
+    | '/api/digimon/main'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiDigimonIdRoute: typeof ApiDigimonIdRoute
-  ApiDigimonMainRoute: typeof ApiDigimonMainRoute
+  ApiDigimonRoute: typeof ApiDigimonRouteWithChildren
+  DigimonListRoute: typeof DigimonListRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,27 +102,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/digimon/list': {
+      id: '/digimon/list'
+      path: '/digimon/list'
+      fullPath: '/digimon/list'
+      preLoaderRoute: typeof DigimonListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/digimon': {
+      id: '/api/digimon'
+      path: '/api/digimon'
+      fullPath: '/api/digimon'
+      preLoaderRoute: typeof ApiDigimonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/digimon/main': {
       id: '/api/digimon/main'
-      path: '/api/digimon/main'
+      path: '/main'
       fullPath: '/api/digimon/main'
       preLoaderRoute: typeof ApiDigimonMainRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ApiDigimonRoute
     }
     '/api/digimon/$id': {
       id: '/api/digimon/$id'
-      path: '/api/digimon/$id'
+      path: '/$id'
       fullPath: '/api/digimon/$id'
       preLoaderRoute: typeof ApiDigimonIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ApiDigimonRoute
     }
   }
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+interface ApiDigimonRouteChildren {
+  ApiDigimonIdRoute: typeof ApiDigimonIdRoute
+  ApiDigimonMainRoute: typeof ApiDigimonMainRoute
+}
+
+const ApiDigimonRouteChildren: ApiDigimonRouteChildren = {
   ApiDigimonIdRoute: ApiDigimonIdRoute,
   ApiDigimonMainRoute: ApiDigimonMainRoute,
+}
+
+const ApiDigimonRouteWithChildren = ApiDigimonRoute._addFileChildren(
+  ApiDigimonRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  ApiDigimonRoute: ApiDigimonRouteWithChildren,
+  DigimonListRoute: DigimonListRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
